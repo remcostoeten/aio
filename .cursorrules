@@ -11,6 +11,34 @@ CODE STANDARDS:
 - Small, documented files with JSDoc
 - @author tags for custom implementations. The author is me (@Remco Stoeten). Put the @author tag on the first line of the file, with date and line 2 @description.
 
+ABSOLUTE NO GO's:
+- No use-toast hook
+- No toast component
+- No usage of auth libraries like Lucia, NextAuth, etc. We roll ourown.
+- No usage of api routes, only when the library calls for it (e.g. callback urls). We use server actions, in theform of queries and mutations.
+- Never more than 2 functions in a server or utillity file. We adhere to strong single responsibility principle.  
+- Never use anything else than drizzle-orm for database operations.
+- Never change the .env, if you want to modiy it create  a .env.copilot file and notify me.
+- Never edit the `drizzle-kit.config.ts` file.
+- Never edit the database entry files. Being `/src/server/db/index.ts.
+- Never add schemas to `/src/server/db/schema/index.ts`. That file is only responsible for re-exporting the schemas.
+- Never edit the `package-lock.json` file.
+- Ask before you want to overhaull package.json
+- Never edit the `tsconfig.json` file.
+- Never import shadcn with it's full path. We have an alias called 'ui' which points to '@/src/shared/ui/index.ts'.
+- Never import the database with a path. We have  an alias pointing to `/src/server/db/index.ts` called `db`. Same goes for `schema` which points to `/src/server/db/schema/index.ts`.
+Thus we use `import { db } from 'db'` and `import { schema } from 'schema'`.
+- Never import mutations/queries/schemas from `@/server/mutation,...` or `@/server/query,...`. We have an alias called `mutation` and `query` which points to `/src/server/actions/mutations/index.ts` and `/src/server/actions/queries/index.ts` respectively.
+Thus we use `import { createUser } from 'mutation'` and `import { getUserByEmail } from 'query'`.
+
+If you're unsure look in the `tsconfig.json` file for the paths.
+
+RESEARCH BEFORE YOU CODE:
+- Check if the query/mutation/schema already exists. They should always be in /server folder.
+- Check if the hook already exists. They should always be in /shared/hooks folder.
+- Check if the component already exists.
+- Check if the type already exists. Usually `.d.ts` 
+
 NAMING:
 - Authentication: use-auth-[name].ts
 - Schemas: z.[name].ts

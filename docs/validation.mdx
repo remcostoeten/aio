@@ -1,0 +1,157 @@
+---
+title: 'Validation Service'
+description: 'Guide to using the ValidationService for form and data validation'
+---
+
+# Validation Service
+
+The `ValidationService` is a type-safe validation utility that provides a consistent way to validate data across the application. It's designed to handle both form-level and field-level validation with TypeScript support.
+
+## Interface
+
+```typescript
+type ValidationService = {
+    validate: (input: unknown) => ValidationResult<unknown>
+    validateField: (field: string, value: unknown) => ValidationResult<unknown>
+}
+```
+
+## When to Use
+
+### Form-Level Validation
+
+Use the `validate` method when you need to:
+- Validate an entire form submission
+- Check multiple fields with interdependent rules
+- Perform complex validation logic across multiple fields
+- Validate nested objects or arrays
+
+```typescript
+const result = validationService.validate({
+    email: 'user@example.com',
+    password: 'password123',
+    confirmPassword: 'password123'
+})
+```
+
+### Field-Level Validation
+
+Use the `validateField` method when you need to:
+- Validate individual form fields on change/blur
+- Provide immediate feedback to users
+- Implement real-time validation
+- Check single field constraints
+
+```typescript
+const emailResult = validationService.validateField('email', 'user@example.com')
+```
+
+## Best Practices
+
+1. **Early Validation**
+   - Validate as early as possible to provide immediate feedback
+   - Use field-level validation for real-time user feedback
+   - Perform form-level validation before submission
+
+2. **Error Handling**
+   - Always handle both success and error cases
+   - Provide clear, user-friendly error messages
+   - Include field-specific error context
+
+3. **Type Safety**
+   - Define validation schemas using Zod
+   - Leverage TypeScript for type inference
+   - Use generic types for better type safety
+
+## Implementation Example
+
+```typescript
+import { z } from 'zod'
+
+const userSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8)
+})
+
+const validationService: ValidationService = {
+    validate: (input) => {
+        try {
+            const result = userSchema.parse(input)
+            return { success: true, data: result }
+        } catch (error) {
+            return { success: false, error }
+        }
+    },
+    validateField: (field, value) => {
+        try {
+            const fieldSchema = userSchema.shape[field]
+            const result = fieldSchema.parse(value)
+            return { success: true, data: result }
+        } catch (error) {
+            return { success: false, error }
+        }
+    }
+}
+```
+
+## Common Use Cases
+
+1. **Form Validation**
+```typescript
+function handleSubmit(data: unknown) {
+    const result = validationService.validate(data)
+    if (!result.success) {
+        // Handle validation errors
+        return
+    }
+    // Process valid data
+}
+```
+
+2. **Real-time Field Validation**
+```typescript
+function handleFieldChange(field: string, value: unknown) {
+    const result = validationService.validateField(field, value)
+    if (!result.success) {
+        // Show field error
+        return
+    }
+    // Field is valid
+}
+```
+
+## Integration with React
+
+```typescript
+function useFormValidation() {
+    const validateField = (field: string, value: unknown) => {
+        const result = validationService.validateField(field, value)
+        // Update form state based on validation result
+        return result
+    }
+
+    const validateForm = (data: unknown) => {
+        const result = validationService.validate(data)
+        // Update form state based on validation result
+        return result
+    }
+
+    return { validateField, validateForm }
+}
+```
+
+## Error Handling
+
+Always handle both success and error cases appropriately:
+
+```typescript
+const result = validationService.validate(formData)
+if (!result.success) {
+    // Handle validation errors
+    setErrors(result.error)
+    return
+}
+
+// Process valid data
+processValidData(result.data)
+``` 

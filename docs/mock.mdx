@@ -1,0 +1,51 @@
+# Mock Implementation Documentation
+
+## Overview
+This document outlines the current mock implementation of the authentication and user management system, and what needs to be changed when moving to production.
+
+## Current Mock Setup
+
+### User Data
+- Location: `src/server/db/index.ts`
+- Purpose: Simulates a database with in-memory user storage
+- Current limitations: Data is reset on server restart
+
+### Authentication Flow
+1. Registration (`src/features/auth/services/auth-service.ts`)
+   - Simulates network delay
+   - Checks for existing users
+   - Creates new user without password hashing
+   - Stores user in mock database
+
+2. Session Management
+   - Currently using localStorage (not secure)
+   - No real token management
+   - Basic cookie-based auth check in middleware
+
+## Production Migration Checklist
+
+### Database Implementation
+- [ ] Install and configure Drizzle ORM
+- [ ] Set up PostgreSQL database
+- [ ] Uncomment and update schema in `src/server/db/schema/user.ts`
+- [ ] Run migrations
+- [ ] Remove mock database
+
+### Authentication Security
+- [ ] Implement password hashing (bcrypt/argon2)
+- [ ] Set up JWT or session-based authentication
+- [ ] Configure secure cookie handling
+- [ ] Add CSRF protection
+- [ ] Implement rate limiting
+
+### User Management
+- [ ] Add email verification
+- [ ] Implement password reset flow
+- [ ] Add account deletion
+- [ ] Set up user roles and permissions
+
+### API Security
+- [ ] Add input validation
+- [ ] Implement proper error handling
+- [ ] Set up logging
+- [ ] Add request sanitization 
