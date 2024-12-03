@@ -1,0 +1,163 @@
+---
+title: 'Authentication Store'
+description: 'Documentation for the Zustand-based authentication store'
+---
+
+# Authentication Store
+
+The authentication store provides a centralized way to manage user authentication state using Zustand.
+
+## Core Features
+
+### Basic Auth
+```typescript
+const { user, login, logout } = useAuthStore()
+
+// Login
+await login({ email, password })
+
+// Logout
+logout()
+
+// Check auth state
+if (user) {
+    console.log('User is logged in')
+}
+```
+
+### Profile Management
+```typescript
+const { profile, updateProfile } = useAuthStore()
+
+// Update profile
+await updateProfile({ displayName: 'John Doe' })
+
+// Access profile data
+console.log(profile?.displayName)
+```
+
+### Session Management
+```typescript
+const { refreshSession, checkSession } = useAuthStore()
+
+// Refresh the session
+await refreshSession()
+
+// Check if session is valid
+const isValid = await checkSession()
+```
+
+### Role-based Access
+```typescript
+const { hasRole, isAdmin } = useAuthStore()
+
+// Check specific role
+if (hasRole('editor')) {
+    // User has editor role
+}
+
+// Check admin status
+if (isAdmin()) {
+    // User is an admin
+}
+```
+
+### Auth Status
+```typescript
+const { isAuthenticated, isLoading } = useAuthStore()
+
+// Check auth status
+if (isAuthenticated()) {
+    // User is logged in
+}
+
+// Check loading state
+if (isLoading) {
+    // Auth state is loading
+}
+```
+
+## Advanced Features
+
+### Multi-factor Authentication
+```typescript
+const { setupMFA, verifyMFA } = useAuthStore()
+
+// Setup MFA
+await setupMFA()
+
+// Verify MFA code
+await verifyMFA('123456')
+```
+
+### Password Management
+```typescript
+const { changePassword, resetPassword } = useAuthStore()
+
+// Change password
+await changePassword('oldPass', 'newPass')
+
+// Reset password
+await resetPassword('user@example.com')
+```
+
+### Session Recovery
+```typescript
+const { recoverSession } = useAuthStore()
+
+// Recover from a broken session
+await recoverSession()
+```
+
+### Device Management
+```typescript
+const { getDevices, revokeDevice } = useAuthStore()
+
+// Get logged in devices
+const devices = await getDevices()
+
+// Revoke specific device
+await revokeDevice(deviceId)
+```
+
+## Error Handling
+
+The store includes comprehensive error handling:
+
+```typescript
+try {
+    await login(credentials)
+} catch (error) {
+    if (error.code === 'AUTH_INVALID_CREDENTIALS') {
+        // Handle invalid credentials
+    } else if (error.code === 'AUTH_MFA_REQUIRED') {
+        // Handle MFA requirement
+    }
+}
+```
+
+## Persistence
+
+Auth state is automatically persisted using Zustand's persist middleware:
+
+- User data
+- Profile information
+- Session tokens
+- Device information
+
+## Events
+
+The store emits events for important auth state changes:
+
+```typescript
+useAuthStore.subscribe(
+    (state) => state.user,
+    (user) => {
+        if (user) {
+            // User logged in
+        } else {
+            // User logged out
+        }
+    }
+)
+``` 

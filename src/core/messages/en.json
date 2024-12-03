@@ -1,0 +1,12 @@
+{
+    "auth": {
+        "login": {
+            "success": "Successfully logged in",
+            "error": "Login failed"
+        },
+        "register": {
+            "success": "Successfully registered",
+            "error": "Registration failed"
+        }
+    }
+}

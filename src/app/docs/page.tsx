@@ -2,7 +2,6 @@
 
 import { cn } from '@/shared/helpers/utils'
 import Link from 'next/link'
-import { useState } from 'react'
 
 type DocMeta = {
     title: string
@@ -11,7 +10,7 @@ type DocMeta = {
 }
 
 export default function DocsPage() {
-    const [docs, setDocs] = useState<DocMeta[]>([
+    const docs: DocMeta[] = [
         {
             title: 'Validation',
             description: 'Guide to using the ValidationService for form and data validation',
@@ -32,7 +31,7 @@ export default function DocsPage() {
             description: 'Working with mock data and testing',
             slug: 'mock'
         }
-    ])
+    ]
 
     return (
         <div className="container mx-auto px-4 py-8">

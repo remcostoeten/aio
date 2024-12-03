@@ -50,6 +50,9 @@
 			"ui": [
 				"./src/shared/ui/index.ts"
 			],
+			"helpers": [
+				"./src/shared/helpers/index.ts"
+			],
 			"schema": [
 				"./src/server/db/schema/index.ts"
 			]

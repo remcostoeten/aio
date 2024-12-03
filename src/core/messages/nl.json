@@ -1,0 +1,25 @@
+{
+  "auth": {
+    "login": "Inloggen",
+    "register": "Registreren",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "passwordMismatch": "De wachtwoorden komen niet overeen",
+    "invalidEmail": "Voer een geldig e-mailadres in"
+  },
+  "common": {
+    "welcome": "Welkom",
+    "error": "Fout",
+    "success": "Succes",
+    "loading": "Laden..."
+  },
+  "navigation": {
+    "home": "Home",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "logout": "Uitloggen"
+  }
+}

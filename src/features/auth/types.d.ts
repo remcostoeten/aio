@@ -12,9 +12,10 @@ export type AuthError = {
 export type AuthFormData = {
     email: string
     password: string
+    firstName?: string
+    lastName?: string
 }
 
-export type RegisterFormData = AuthFormData & {
-    firstName: string
-    lastName: string
-}
+export type RegisterFormData = AuthFormData
+
+export type LoginFormData = AuthFormData

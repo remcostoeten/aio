@@ -1,6 +1,6 @@
 /**
  * @author Remco Stoeten
- * @description Core user schema
+ * @description User schema and types
  */
 
 export type User = {
@@ -10,4 +10,7 @@ export type User = {
     isActive: boolean
     createdAt: Date
     updatedAt: Date
-} 
+}
+
+export type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
+export type UpdateUserInput = Partial<CreateUserInput> 

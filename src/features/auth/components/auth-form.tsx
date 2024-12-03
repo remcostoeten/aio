@@ -5,8 +5,7 @@
 
 'use client'
 
-import register from '@/server/actions/mutations/auth/register'
-import login from '@/server/actions/mutations/login'
+import { login, register } from '@/server/actions/mutations'
 import LoadingButton from '@/shared/ui/loading-button'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
@@ -43,7 +42,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 ? await login(data)
                 : await register(data)
 
-            if ('error' in result) {
+            if ('error' in result && result.error) {
                 toast.error(t(`${type}.error`), {
                     description: result.error.message
                 })
