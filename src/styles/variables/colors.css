@@ -1,0 +1,16 @@
+:root {
+  --off-white: #f2f0ef;
+  --dark-white: rgb(180,180,180);
+  --bg: #0f0f0f;
+  --section:#171717;
+  --border: red;
+  /* --border: rgb(46,46,46); */
+
+  /* errors */
+  --error-text:#e5484d;
+  --error-bg:rgb(29, 20, 18);
+  --error-border:rgb(127, 35, 21);
+
+  /*  transitions */
+  --cubic: cubic-bezier(0.4, 0, 0.2, 1);
+}

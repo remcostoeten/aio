@@ -1,0 +1,1 @@
+export type Framework = 'Flask' | 'NextJS' | 'React';
