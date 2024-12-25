@@ -1,23 +1,26 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { themes, defaultTheme } from '@/shared/config/theme'
-import type { Theme } from '@/shared/types/theme'
+/**
+ * @author Remco Stoeten
+ * @description Theme switcher hook with type safety
+ */
 
-interface ThemeState {
-  currentTheme: string
-  setTheme: (theme: string) => void
-  getTheme: () => Theme
+import {
+	defaultTheme,
+	themes,
+	type ThemeColors,
+	type ThemeName
+} from '@/shared/config/theme'
+import { create } from 'zustand'
+
+type ThemeStore = {
+	currentTheme: ThemeName
+	colors: ThemeColors
+	setTheme: (theme: ThemeName) => void
+	getTheme: () => ThemeColors
 }
 
-export const useThemeSwitcher = create<ThemeState>()(
-  persist(
-    (set, get) => ({
-      currentTheme: defaultTheme,
-      setTheme: (theme) => set({ currentTheme: theme }),
-      getTheme: () => themes[get().currentTheme]
-    }),
-    {
-      name: 'theme-storage'
-    }
-  )
-)
+export const useThemeSwitcher = create<ThemeStore>((set, get) => ({
+	currentTheme: defaultTheme,
+	colors: themes[defaultTheme],
+	setTheme: (theme) => set({ currentTheme: theme, colors: themes[theme] }),
+	getTheme: () => themes[get().currentTheme]
+}))

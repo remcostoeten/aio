@@ -1,4 +1,2 @@
-export { CodeSnippets } from './code-snippets'
-export { Sidebar } from './sidebar'
-export { SnippetHub } from './snippet-hub'
-export { Metadata } from './metadata'
+export { Editor } from './editor'
+export { SnippetActions } from './snippet-actions'

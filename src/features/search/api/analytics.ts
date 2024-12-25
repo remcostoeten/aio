@@ -1,4 +1,4 @@
-import { db } from '@/services/database'
+import { supabase } from 'db'
 import type { SearchResult } from '../types'
 
 export type SearchAnalytics = {
@@ -35,7 +35,7 @@ export const searchAnalyticsDb = {
       .group('query')
       .order('count', { ascending: false })
       .limit(10)
-    
+
     if (error) throw error
     return data
   },
@@ -46,8 +46,8 @@ export const searchAnalyticsDb = {
       .from('search_analytics')
       .select('*')
       .not('selectedResult', 'is', null)
-    
+
     if (error) throw error
     return data.length / await getTotalSearches()
   }
-} 
+}

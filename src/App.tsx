@@ -1,18 +1,17 @@
-import { Toaster } from 'sonner'
-import { RouterProvider } from '@tanstack/react-router'
-import { ThemeProvider } from '@/components/theme/theme-provider'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { LoginPage } from '@/features/auth'
 import { AuthProvider } from '@/shared/context/auth-context'
-import { router } from './routes'
 
-function App() {
+export default function App() {
+  console.log('App rendering')
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <Router>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
       </AuthProvider>
-    </ThemeProvider>
+    </Router>
   )
 }
-
-export default App

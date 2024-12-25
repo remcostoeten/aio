@@ -1,4 +1,3 @@
-"use client"
 
 import { Code, FileCode } from "lucide-react"
 import { EmptyState } from "@/shared/components/empty-state"

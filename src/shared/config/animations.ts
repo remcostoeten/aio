@@ -21,43 +21,27 @@ export const quoteVariants = {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.2,
-        ease: bezierEasing
-      }
-    }
-  },
-  quoteMark: {
-    hidden: { opacity: 0, y: -15, rotate: -10 },
-    visible: {
-      opacity: 0.3,
-      y: 0,
-      rotate: 0,
-      transition: {
-        duration: 0.5,
-        ease: bezierEasing
+        staggerChildren: 0.15
       }
     }
   },
   text: {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
-        ease: bezierEasing
+        duration: 0.5
       }
     }
   },
   author: {
-    hidden: { opacity: 0, x: -15 },
+    hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
-      x: 0,
+      y: 0,
       transition: {
-        duration: 0.5,
-        ease: bezierEasing
+        duration: 0.5
       }
     }
   }

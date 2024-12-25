@@ -1,4 +1,3 @@
-"use client"
 
 import { Editor } from "@monaco-editor/react"
 import { useSnippetStore } from "../store/snippet-store"

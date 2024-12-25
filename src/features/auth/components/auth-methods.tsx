@@ -1,4 +1,3 @@
-"use client"
 
 import { AuthFeatureFlag, isAuthFeatureEnabled, isAnimationEnabled, AnimationType } from '@/core/config/feature-flags'
 import { motion } from 'framer-motion'

@@ -10,6 +10,10 @@
   ],
   "rules": {
     // Import sorting
+    "import/order": ["error", { "groups": ["builtin", "external"], "pathGroups": [{ "pattern": "@typescript/**", "position": "end" }] }],
+    "import/newline-between-modules": "off",
+    "simple-import-sort/imports-first": "warn",
+    "simple-import-sort/export-before-imports": "warn"
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "import/first": "error",
@@ -25,7 +29,7 @@
     "react/no-unused-prop-types": "error",
     "react/jsx-sort-props": ["error", {
       "callbacksLast": true,
-      "shorthandFirst": true,
+      "shorthandFirst": true,N
       "reservedFirst": true
     }],
 

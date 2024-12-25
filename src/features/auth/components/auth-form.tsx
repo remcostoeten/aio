@@ -1,41 +1,25 @@
-"use client"
 
 import { OAuthButtons } from './oauth-buttons'
 import { EmailForm } from './email-form'
-import { theme } from '@/shared/config/theme'
+import { type AuthFormProps } from '../types'
 
-interface AuthFormProps {
-  type: 'login' | 'register'
-}
-
-export function AuthForm({ type }: AuthFormProps) {
+export function AuthForm({ type, action }: AuthFormProps) {
   return (
     <div className="space-y-6">
       <OAuthButtons />
       
-      <div className="relative">
+      <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-neutral-800" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className={`bg-[${theme.colors.background.default}] px-2 text-neutral-400`}>
-            or continue with email
+          <span className="px-2 text-[#666666] bg-[#1C1C1C]">
+            or
           </span>
         </div>
       </div>
 
-      <EmailForm type={type} />
-
-      <div className="text-xs text-center text-neutral-400">
-        By continuing, you agree to our{' '}
-        <a href="#" className={`text-[${theme.colors.primary}] hover:opacity-80 transition-opacity`}>
-          Terms of Service
-        </a>
-        {' '}and{' '}
-        <a href="#" className={`text-[${theme.colors.primary}] hover:opacity-80 transition-opacity`}>
-          Privacy Policy
-        </a>
-      </div>
+      <EmailForm type={type} onSubmit={action} />
     </div>
   )
 }

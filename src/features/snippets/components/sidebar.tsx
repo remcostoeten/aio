@@ -1,113 +1,87 @@
-"use client"
+/**
+ * @author Remco Stoeten
+ * @description Snippet sidebar component for navigation and snippet management
+ */
 
-import { PlusCircle, Search, X } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/shared/components/ui/button"
-import { Input } from "@/shared/components/ui/input"
-import { ScrollArea } from "@/shared/components/ui/scroll-area"
-import { useSnippetStore } from "../store/snippet-store"
-import { Badge } from "@/shared/components/ui/badge"
-import { cn } from "@/shared/helpers"
-import { NoSnippetsFound } from "./empty-states"
-
-function SnippetItem({ snippet, onClick }: { snippet: any; onClick: () => void }) {
-  return (
-    <div
-      className={cn(
-        "p-3 rounded-lg cursor-pointer transition-colors group",
-        snippet.id === useSnippetStore().selectedSnippetId
-          ? "bg-secondary"
-          : "hover:bg-secondary/50"
-      )}
-      onClick={onClick}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="font-medium">{snippet.title}</h3>
-      </div>
-      <div className="flex flex-wrap gap-1">
-        <Badge variant="secondary" className="bg-primary/10">
-          {snippet.language}
-        </Badge>
-        {snippet.labels.map((label: string) => (
-          <Badge key={label} variant="outline" className="border-primary/20">
-            {label}
-          </Badge>
-        ))}
-      </div>
-    </div>
-  )
-}
+import type { Snippet } from '@/server/db/types'
+import { cn } from '@/shared/helpers'
+import { Plus, Search } from 'lucide-react'
+import { useState } from 'react'
+import { Badge, Button, Input, ScrollArea } from 'ui'
+import { useSnippetStore } from '../store/snippet-store'
 
 export function Sidebar() {
-  const [search, setSearch] = useState("")
-  const { snippets, selectedSnippetId, setSelectedSnippetId, addSnippet } = useSnippetStore()
+	const { snippets, selectedSnippetId, selectSnippet, createSnippet } =
+		useSnippetStore()
+	const [searchQuery, setSearchQuery] = useState('')
 
-  const filteredSnippets = snippets.filter(
-    (snippet) =>
-      snippet.title.toLowerCase().includes(search.toLowerCase()) ||
-      snippet.labels.some((label) => label.toLowerCase().includes(search.toLowerCase()))
-  )
+	const filteredSnippets = snippets.filter((snippet: Snippet) =>
+		snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
+	)
 
-  const handleNewSnippet = () => {
-    addSnippet({
-      title: "New Snippet",
-      code: "",
-      language: "javascript",
-      description: "",
-      frameworks: [],
-      labels: [],
-      folderId: null,
-    })
-  }
-
-  return (
-    <div className="h-screen border-r bg-card">
-      <div className="p-4 space-y-4">
-        <div className="flex gap-2">
-          <Button
-            variant="default"
-            className="flex-1 justify-start space-x-2"
-            onClick={handleNewSnippet}
-          >
-            <PlusCircle size={16} />
-            <span>New Snippet</span>
-          </Button>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search snippets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 bg-background"
-          />
-          {search && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-full"
-              onClick={() => setSearch("")}
-            >
-              <X size={16} />
-            </Button>
-          )}
-        </div>
-      </div>
-      <ScrollArea className="h-[calc(100vh-8rem)]">
-        <div className="p-4 space-y-2">
-          {filteredSnippets.length === 0 ? (
-            <NoSnippetsFound onCreateSnippet={handleNewSnippet} />
-          ) : (
-            filteredSnippets.map((snippet) => (
-              <SnippetItem
-                key={snippet.id}
-                snippet={snippet}
-                onClick={() => setSelectedSnippetId(snippet.id)}
-              />
-            ))
-          )}
-        </div>
-      </ScrollArea>
-    </div>
-  )
+	return (
+		<div className="w-80 border-r bg-card">
+			<div className="p-4 border-b">
+				<div className="flex items-center gap-2">
+					<Input
+						placeholder="Search snippets..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="bg-background"
+					/>
+					<Button size="icon" variant="ghost" className="shrink-0">
+						<Search className="h-4 w-4" />
+					</Button>
+				</div>
+				<Button className="w-full mt-4" onClick={() => createSnippet()}>
+					<Plus className="h-4 w-4 mr-2" />
+					New Snippet
+				</Button>
+			</div>
+			<ScrollArea className="h-[calc(100vh-8.5rem)]">
+				<div className="p-4 space-y-2">
+					{filteredSnippets.map((snippet: Snippet) => (
+						<button
+							key={snippet.id}
+							onClick={() => selectSnippet(snippet.id)}
+							className={cn(
+								'w-full text-left p-3 rounded-lg transition-colors',
+								'hover:bg-accent',
+								selectedSnippetId === snippet.id && 'bg-accent'
+							)}
+						>
+							<div className="space-y-2">
+								<div className="flex items-center justify-between">
+									<span className="font-medium">
+										{snippet.title || 'Untitled'}
+									</span>
+									{snippet.isDraft && (
+										<Badge
+											variant="outline"
+											className="text-xs"
+										>
+											Draft
+										</Badge>
+									)}
+								</div>
+								{snippet.description && (
+									<p className="text-sm text-muted-foreground line-clamp-2">
+										{snippet.description}
+									</p>
+								)}
+								{snippet.language && (
+									<Badge
+										variant="secondary"
+										className="text-xs"
+									>
+										{snippet.language}
+									</Badge>
+								)}
+							</div>
+						</button>
+					))}
+				</div>
+			</ScrollArea>
+		</div>
+	)
 }

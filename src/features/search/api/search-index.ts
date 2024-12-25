@@ -1,56 +1,61 @@
+/**
+ * @author Remco Stoeten
+ * @description Search index configuration and data
+ */
+
 import { router } from '@/routes'
-import { snippetDb } from '@/services/database/snippets'
+import {
+	CodeIcon,
+	FolderPlusIcon,
+	NavigationIcon,
+	PlusIcon
+} from 'lucide-react'
+import type { ReactNode } from 'react'
 
-export const createSearchIndex = async (userId: string): Promise<SearchIndex> => {
-  // Index routes
-  const routes: SearchResult[] = router.routes.map(route => ({
-    id: route.path,
-    type: 'route',
-    title: route.path,
-    url: route.path,
-    icon: <NavigationIcon />,
-    keywords: [route.path, route.id]
-  }))
+type SearchItem = {
+	id: string
+	title: string
+	description?: string
+	icon?: ReactNode
+	keywords: string[]
+	action?: () => void
+}
 
-  // Index snippets
-  const snippets = await snippetDb.list(userId)
-  const snippetResults: SearchResult[] = snippets.map(snippet => ({
-    id: snippet.id,
-    type: 'snippet',
-    title: snippet.title,
-    description: truncate(snippet.content, 100),
-    url: `/snippets/${snippet.id}`,
-    icon: <CodeIcon />,
-    keywords: [
-      snippet.title,
-      snippet.language,
-      ...snippet.labels
-    ]
-  }))
+export const searchIndex: SearchItem[] = [
+	// Navigation items
+	{
+		id: 'navigation',
+		title: 'Navigation',
+		description: 'Quick navigation to different sections',
+		icon: NavigationIcon,
+		keywords: ['navigate', 'menu', 'sections']
+	},
 
-  // Index actions
-  const actions: SearchResult[] = [
-    {
-      id: 'create-snippet',
-      type: 'action',
-      title: 'Create New Snippet',
-      icon: <PlusIcon />,
-      action: () => router.navigate('/snippets/new'),
-      keywords: ['new', 'create', 'snippet', 'add']
-    },
-    {
-      id: 'create-folder',
-      type: 'action',
-      title: 'Create New Folder',
-      icon: <FolderPlusIcon />,
-      action: () => router.navigate('/folders/new'),
-      keywords: ['new', 'create', 'folder']
-    }
-  ]
+	// Code snippets
+	{
+		id: 'snippets',
+		title: 'Code Snippets',
+		description: 'Manage your code snippets',
+		icon: CodeIcon,
+		keywords: ['code', 'snippets', 'editor', 'programming', 'development']
+	},
 
-  return {
-    routes,
-    snippets: snippetResults,
-    actions
-  }
-} 
+	// Actions
+	{
+		id: 'new-snippet',
+		title: 'New Snippet',
+		description: 'Create a new code snippet',
+		icon: PlusIcon,
+		keywords: ['create', 'new', 'snippet', 'add'],
+		action: () => router.navigate('/snippets/new')
+	},
+
+	{
+		id: 'new-folder',
+		title: 'New Folder',
+		description: 'Create a new folder',
+		icon: FolderPlusIcon,
+		keywords: ['create', 'new', 'folder', 'organize'],
+		action: () => router.navigate('/folders/new')
+	}
+]

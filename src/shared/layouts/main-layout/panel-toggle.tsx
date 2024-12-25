@@ -1,4 +1,3 @@
-"use client"
 
 import { Button } from "@/shared/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"

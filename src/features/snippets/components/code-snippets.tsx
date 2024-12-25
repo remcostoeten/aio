@@ -1,4 +1,3 @@
-"use client"
 
 import { MainLayout } from "@/shared/layouts"
 import { Sidebar } from "./sidebar"

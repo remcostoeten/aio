@@ -1,4 +1,3 @@
-"use client"
 
 import { cn } from "@/shared/helpers"
 import { createContext, useContext, useState } from "react"

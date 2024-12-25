@@ -1,4 +1,3 @@
-"use client"
 
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../context/auth-context"

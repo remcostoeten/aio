@@ -1,17 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
-import { snippetDb } from '@/services/database/snippets'
-import type { Snippet } from '@/services/database/types'
+/**
+ * @author Remco Stoeten
+ * @description Snippet query handlers for fetching snippet data
+ */
 
-export const useSnippets = (userId: string) => {
-  return useQuery({
-    queryKey: ['snippets', userId],
-    queryFn: () => snippetDb.list(userId)
-  })
+import { db } from 'db'
+import type { Snippet } from '@/server/db/types'
+
+export async function getSnippets(): Promise<Snippet[]> {
+  return db.query.snippets.findMany()
 }
 
-export const useSnippet = (id: string) => {
-  return useQuery({
-    queryKey: ['snippets', id],
-    queryFn: () => snippetDb.getById(id)
+export async function getSnippetById(id: string): Promise<Snippet | null> {
+  return db.query.snippets.findFirst({
+    where: { id }
   })
 } 

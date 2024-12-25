@@ -1,4 +1,3 @@
-"use client"
 
 import { ResizableHandle } from "@/shared/components/ui/resizable"
 

@@ -1,4 +1,3 @@
-"use client"
 
 import { forwardRef, useCallback } from "react"
 import { ChevronDown } from "lucide-react"

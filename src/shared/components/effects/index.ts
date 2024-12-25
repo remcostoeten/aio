@@ -1,1 +1,1 @@
-export { default as TextLoop } from './swapping-words'
+export { TextLoop } from './text-loop'

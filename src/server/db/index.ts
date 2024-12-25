@@ -1,7 +1,7 @@
-import { createSupabaseAdapter } from './adapter'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+import { env } from '@/env.mjs'
 
-// Export the database interface
-export type { DatabaseAdapter } from './adapter'
-
-// Export the current database implementation
-export const db = createSupabaseAdapter()
+const connectionString = env.DATABASE_URL
+const client = postgres(connectionString)
+export const db = drizzle(client)
