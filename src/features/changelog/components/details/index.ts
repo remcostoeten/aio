@@ -1,0 +1,5 @@
+export { default as CommitDetails } from './commit-details'
+export { default as IssueDetails } from './issue-details'
+export { default as PullRequestDetails } from './pull-request-details'
+export { default as ReleaseDetails } from './release-details'
+export { default as FileChanges } from './file-changes' 

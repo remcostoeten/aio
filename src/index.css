@@ -2,9 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --white: rgb(250,250,250);
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 @layer base {
   * {
     @apply border-border;
+  }
+  
+  @keyframes rotate {
+    to {
+      --angle: 360deg;
+    }
+  }
+  
+  .timeline-glow {
+    position: relative;
+  }
+  
+  .timeline-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: conic-gradient(from var(--angle), theme(colors.brand.DEFAULT), theme(colors.purple.500), theme(colors.blue.500), theme(colors.brand.DEFAULT));
+    border-radius: inherit;
+    animation: rotate 4s linear infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .timeline-glow:hover::before {
+    opacity: 1;
   }
 }
 

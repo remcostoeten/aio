@@ -1,104 +1,98 @@
-'use client'
-
-import { useState } from 'react'
-import { Apple, ChevronDown, Github, Mail } from 'lucide-react'
+import { Apple, ChevronDown, Github } from 'lucide-react'
 import { DiscordIcon } from '../icons/discord-icon'
 import { MicrosoftIcon } from '../icons/microsoft-icon'
-import { useAuth } from '../contexts/auth-context'
-import { useNavigate } from '@tanstack/react-router'
+import { useAuth } from '../contexts/auth-context' 
+import { env } from '../../../api/env'
+import {
+	PopoverRoot,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverBody
+} from '../../../shared/components/popover'
 
-type Provider = 'github' | 'microsoft' | 'apple' | 'discord'
-
-interface SocialLoginButtonsProps {
-  mode: 'signin' | 'signup'
+type SocialLoginButtonsProps = {
+	mode: 'signin' | 'signup'
 }
 
 export function SocialLoginButtons({ mode }: SocialLoginButtonsProps) {
-  const [showMore, setShowMore] = useState(false)
-  const [loading, setLoading] = useState<Provider | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const { signInWithProvider } = useAuth()
-  const navigate = useNavigate()
+	const { signInWithProvider } = useAuth()
 
-  const handleProviderSignIn = async (provider: Provider) => {
-    try {
-      setError(null)
-      setLoading(provider)
-      
-      const { error: authError } = await signInWithProvider(provider)
-      
-      if (authError) {
-        setError(authError.message || `Failed to sign in with ${provider}`)
-        return
-      }
-      
-      navigate({ to: '/' })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : `An unexpected error occurred with ${provider}`)
-    } finally {
-      setLoading(null)
-    }
-  }
+	const handleProviderSignIn = async (provider: string) => {
+		try {
+			if (!provider) {
+				console.error('Provider is required');
+				return;
+			}
 
-  const renderProviderButton = (provider: Provider, icon: JSX.Element, label: string, delay?: string) => {
-    const isLoading = loading === provider
-    const buttonClass = `w-full flex justify-center items-center px-4 py-2 border ${
-      showMore ? 'animate-fadeInUp opacity-100 transform-none' : 'opacity-0 translate-y-4 pointer-events-none'
-    } ${
-      isLoading 
-        ? 'bg-surface-dark cursor-not-allowed' 
-        : 'bg-surface-light hover:bg-surface active:bg-surface-dark'
-    } border-gray-600 rounded text-sm font-medium text-white transition-all duration-200 ease-in-out`
+			await signInWithProvider(provider)
+		} catch (error) {
+			console.error(`Failed to sign in with ${provider}:`, error)
+		}
+	}
 
-    return (
-      <button
-        type="button"
-        disabled={isLoading || loading !== null}
-        onClick={() => handleProviderSignIn(provider)}
-        className={buttonClass}
-        style={delay ? { animationDelay: delay } : undefined}
-      >
-        {isLoading ? (
-          <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-        ) : (
-          icon
-        )}
-        {isLoading ? 'Connecting...' : label}
-      </button>
-    )
-  }
+	const buttonBaseClass =
+		'w-full flex justify-center items-center px-4 py-2.5 rounded-md text-sm font-medium bg-surface hover:bg-surface-light active:bg-surface-dark text-white/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
-  return (
-    <div className="space-y-4">
-      {renderProviderButton('github', <Github className="h-5 w-5 mr-2" />, 'Continue with GitHub')}
+	return (
+		<div className="space-y-3">
+			<button
+				type="button"
+				onClick={() => handleProviderSignIn('github')}
+				disabled={!env.VITE_SUPABASE_URL}
+				className={buttonBaseClass}
+			>
+				<Github className="h-5 w-5 mr-2.5" />
+				Continue with GitHub
+			</button>
 
-      <div className="relative">
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={() => setShowMore(!showMore)}
-            className="w-full flex items-center justify-center px-4 py-2 text-sm text-gray-500 hover:text-white transition-colors"
-            disabled={loading !== null}
-          >
-            <span>More options</span>
-            <ChevronDown
-              className={`ml-2 h-4 w-4 transition-transform duration-200 ${
-                showMore ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
+			<div className="relative w-full text-center">
+				<PopoverRoot>
+					<PopoverTrigger className="text-[13px] text-gray-500 hover:text-white/90 transition-colors mt-2 inline-flex items-center group">
+						<div className="flex items-center">
+							<span>More options</span>
+							<ChevronDown className="ml-1 h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+						</div>
+					</PopoverTrigger>
+					<PopoverContent className="w-full bg-surface border border-border/40 shadow-xl rounded-lg backdrop-blur-sm backdrop-filter">
+						<PopoverBody className="space-y-3 p-3">
+							<div className="px-2 py-1.5 text-sm text-gray-400 text-center border-b border-border/40 mb-2">
+								Additional sign in options
+							</div>
+							<button
+								type="button"
+								onClick={() =>
+									handleProviderSignIn('microsoft')
+								}
+								disabled={!env.VITE_SUPABASE_URL}
+								className={buttonBaseClass}
+							>
+								<MicrosoftIcon className="h-5 w-5 mr-2.5" />
+								Continue with Microsoft
+							</button>
 
-          {renderProviderButton('microsoft', <MicrosoftIcon className="h-5 w-5 mr-2" />, 'Continue with Microsoft', '100ms')}
-          {renderProviderButton('apple', <Apple className="h-5 w-5 mr-2" />, 'Continue with Apple', '200ms')}
-          {renderProviderButton('discord', <DiscordIcon className="h-5 w-5 mr-2" />, 'Continue with Discord', '300ms')}
-        </div>
-      </div>
+							<button
+								type="button"
+								onClick={() => handleProviderSignIn('apple')}
+								disabled={!env.VITE_SUPABASE_URL}
+								className={buttonBaseClass}
+							>
+								<Apple className="h-5 w-5 mr-2.5" />
+								Continue with Apple
+							</button>
 
-      {error && (
-        <div className="text-red-400 text-sm animate-error bg-red-500/10 p-3 rounded-lg" key={error}>
-          {error}
-        </div>
-      )}
-    </div>
-  )
+							<button
+								type="button"
+								onClick={() => handleProviderSignIn('discord')}
+								disabled={!env.VITE_SUPABASE_URL}
+								className={buttonBaseClass}
+							>
+								<DiscordIcon className="h-5 w-5 mr-2.5" />
+								Continue with Discord
+							</button>
+						</PopoverBody>
+					</PopoverContent>
+				</PopoverRoot>
+			</div>
+		</div>
+	)
 }

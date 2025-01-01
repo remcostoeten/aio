@@ -6,6 +6,7 @@
 import { createRoute } from '@tanstack/react-router'
 import { RoadmapPage, ChangelogPage } from '../views'
 import { rootRoute } from './root-route'
+import RootPage from '../views/root'
 
 /**
  * Collection of public routes accessible without authentication.
@@ -16,7 +17,7 @@ export const publicRoutes = {
   home: createRoute({
     getParentRoute: () => rootRoute,
     path: '/',
-    component: () => import('../views/root').then((module) => ({ default: module.default })),
+    component: RootPage
   }),
 
   /** Roadmap page route */
