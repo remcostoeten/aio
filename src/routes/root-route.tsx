@@ -4,6 +4,7 @@
  */
 
 import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Header } from '../components/header'
 
 /**
  * The root route of the application.
@@ -11,5 +12,12 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
  * @type {import('@tanstack/react-router').RootRoute}
  */
 export const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: () => (
+    <>
+      <Header />
+      <main className="pt-16">
+        <Outlet />
+      </main>
+    </>
+  ),
 }) 
