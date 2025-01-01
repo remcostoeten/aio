@@ -1,8 +1,8 @@
 import { Header } from '../components/header';
-import { AuthForm } from '../features/auth/components/auth-form';
+import AuthForm from '../features/auth/components/auth-form';
 
 interface AuthPageProps {
-  mode: 'signin' | 'signup';
+  mode: 'signin' | 'signup' | 'forgot-password'
 }
 
 export function AuthPage({ mode }: AuthPageProps) {

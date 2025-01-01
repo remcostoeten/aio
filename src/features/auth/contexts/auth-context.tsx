@@ -11,6 +11,7 @@ interface AuthContextType {
   signInWithProvider: (provider: string) => Promise<void>;
   signOut: () => Promise<{ error: Error | null }>;
   updateProfile: (updates: Partial<User>) => Promise<User | null>;
+  resetPassword: (email: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,6 +58,11 @@ export const AuthProvider: React.FC<{
     await authService.signInWithProvider(provider);
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await authService.resetPassword(email);
+    return { error };
+  };
+
   const signOut = async () => {
     const { error } = await authService.signOut();
     return { error };
@@ -78,6 +84,7 @@ export const AuthProvider: React.FC<{
     signInWithProvider,
     signOut,
     updateProfile,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

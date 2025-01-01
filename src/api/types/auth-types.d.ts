@@ -1,12 +1,17 @@
-export interface User {
+export type UserRole = 'user' | 'admin';
+
+export type User = {
   id: string;
   email: string;
-}
+  roles: UserRole[];
+  createdAt?: string;
+  updatedAt?: string;
+};
 
-export interface AuthResponse {
+export type AuthResponse = {
   user: User | null;
   error: Error | null;
-}
+};
 
 export type AuthStateChangeCallback = (user: User | null) => void;
 
@@ -17,4 +22,5 @@ export interface AuthMethods {
   signOut: () => Promise<{ error: Error | null }>;
   getCurrentUser: () => Promise<User | null>;
   onAuthStateChange: (callback: AuthStateChangeCallback) => () => void;
-}
+  updateUserProfile: (userId: string, updates: Partial<User>) => Promise<User | null>;
+} 

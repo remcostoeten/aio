@@ -2,12 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An all-in-one application combining multiple tools and utilities" />
+    
+    <meta property="og:title" content="Remco Stoeten - AIO" />
+    <meta property="og:description" content="An all-in-one application combining multiple tools and utilities" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aio.remcostoeten.com" />
+    
+    <meta name="theme-color" content="#1A1A1A" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <link rel="preload" href="/src/main.tsx" as="script" type="module" />
+    
     <title>Remco Stoeten - AIO</title>
   </head>
-  <body  class="bg-surface-dark">
+  <body class="bg-surface text-white antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <noscript>
+      <div style="padding: 20px; text-align: center;">
+        Please enable JavaScript to view this website.
+      </div>
+    </noscript>
   </body>
 </html>

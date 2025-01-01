@@ -1,36 +1,84 @@
-import { AuthMethods, User, AuthResponse } from '../types/auth-types';
-import * as queries from '../queries';
-import * as mutations from '../mutations';
+import { createAuthMethods } from '../auth/auth-functions';
+import { SupabaseClient, Provider } from '@supabase/supabase-js';
+import { env } from '../env';
+import { User } from '../types/auth-types';
 
-export function createAuthService(authMethods: AuthMethods) {
-  return {
-    signUpWithEmail: (email: string, password: string): Promise<AuthResponse> =>
-      mutations.signUp(authMethods)(email, password),
+export type AuthResponse = {
+  user: User | null;
+  error: Error | null;
+};
 
-    signInWithEmail: (email: string, password: string): Promise<AuthResponse> =>
-      mutations.signIn(authMethods)(email, password),
-
-    signInWithGithub: (): Promise<void> =>
-      mutations.signInWithProvider(authMethods)('github'),
-
-    signOut: (): Promise<{ error: Error | null }> =>
-      mutations.signOut(authMethods)(),
-
-    getCurrentUser: (): Promise<User | null> =>
-      queries.getCurrentUser(authMethods)(),
-
-    getUserProfile: (userId: string): Promise<User | null> =>
-      queries.getUserProfile(authMethods)(userId),
-
-    updateUserProfile: (
-      userId: string,
-      updates: Partial<User>
-    ): Promise<User | null> =>
-      mutations.updateUserProfile(authMethods)(userId, updates),
-
-    onAuthStateChange: (callback: (user: User | null) => void): (() => void) =>
-      authMethods.onAuthStateChange(callback),
-  };
+export interface AuthService {
+  signUpWithEmail: (email: string, password: string) => Promise<AuthResponse>;
+  signInWithEmail: (email: string, password: string) => Promise<AuthResponse>;
+  signInWithProvider: (provider: string) => Promise<AuthResponse>;
+  signOut: () => Promise<AuthResponse>;
+  resetPassword: (email: string) => Promise<AuthResponse>;
+  getCurrentUser: () => Promise<User | null>;
+  onAuthStateChange: (callback: (user: User | null) => void) => () => void;
+  updateUserProfile: (userId: string, updates: Partial<User>) => Promise<User | null>;
+  checkAndAssignAdminRole: () => Promise<void>;
 }
 
-export type AuthService = ReturnType<typeof createAuthService>;
+export function createAuthService(client: SupabaseClient): AuthService {
+  const authMethods = createAuthMethods(client);
+  const isAdminEmail = (email: string) => env.VITE_ADMIN_EMAIL.includes(email);
+
+  return {
+    signUpWithEmail: async (email: string, password: string) => {
+      const response = await authMethods.signUp(email, password);
+      if (response.user && isAdminEmail(email)) {
+        await authMethods.updateUserProfile(response.user.id, {
+          roles: ['user', 'admin']
+        });
+      }
+      return response;
+    },
+
+    signInWithEmail: async (email: string, password: string) => {
+      const response = await authMethods.signIn(email, password);
+      if (response.user && isAdminEmail(email) && !response.user.roles?.includes('admin')) {
+        await authMethods.updateUserProfile(response.user.id, {
+          roles: [...(response.user.roles || []), 'admin']
+        });
+      }
+      return response;
+    },
+
+    signInWithProvider: async (provider: string) => {
+      try {
+        const response = await client.auth.signInWithOAuth({
+          provider: provider as Provider
+        });
+        return { 
+          user: response.data.session?.user as User || null,
+          error: response.error 
+        };
+      } catch (error) {
+        return { user: null, error: error as Error };
+      }
+    },
+
+    resetPassword: async (email: string) => {
+      const { error } = await client.auth.resetPasswordForEmail(email);
+      return { user: null, error };
+    },
+
+    signOut: async () => {
+      const { error } = await authMethods.signOut();
+      return { user: null, error };
+    },
+
+    getCurrentUser: authMethods.getCurrentUser,
+    onAuthStateChange: authMethods.onAuthStateChange,
+    updateUserProfile: authMethods.updateUserProfile,
+    checkAndAssignAdminRole: async () => {
+      const user = await authMethods.getCurrentUser();
+      if (user && isAdminEmail(user.email) && !user.roles?.includes('admin')) {
+        await authMethods.updateUserProfile(user.id, {
+          roles: [...(user.roles || []), 'admin']
+        });
+      }
+    }
+  };
+}

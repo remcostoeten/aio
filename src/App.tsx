@@ -1,17 +1,17 @@
-import { RouterProvider } from '@tanstack/react-router'
-import { AuthProvider } from './features/auth/contexts/auth-context'
-import { router } from './router'
-import { createAuthService } from './api/services/auth-service'
-import { getDatabaseClient } from './api/clients/database-client'
+'use client'
 
-function App() {
-  const authService = createAuthService(getDatabaseClient())
+import { RouterProvider } from "@tanstack/react-router"
+import { AuthProvider } from "./features/auth/contexts/auth-context"
+import { router } from "./routes"
+import { createAuthService } from "./api/services/auth-service"
+import { getDatabaseClient } from "./api/clients/database-client"
 
+type Props = {}
+
+export default function App({}: Props) {
   return (
-    <AuthProvider authService={authService}>
+    <AuthProvider authService={createAuthService(getDatabaseClient())}>
       <RouterProvider router={router} />
     </AuthProvider>
-  );
+  )
 }
-
-export default App

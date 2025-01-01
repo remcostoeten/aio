@@ -1,0 +1,157 @@
+# Routing Guide
+
+## Overview
+
+This guide covers our routing system using TanStack Router, focusing on type-safe routing and code organization.
+
+## Route Structure
+
+Our routes are organized by feature domains:
+
+```ts
+src/router/
+├── index.tsx        # Router initialization
+├── types.ts         # Route type utilities
+├── routes.ts        # Route composition
+└── routes/
+    ├── public.routes.ts    # Public routes (home, changelog, etc.)
+    ├── auth.routes.ts      # Authentication routes
+    └── protected.routes.ts # Protected routes (dashboard, etc.)
+```
+
+### Route Utilities
+
+We use a type-safe utility for creating lazy-loaded routes:
+
+```ts
+// src/router/types.ts
+export const createLazyRoute = <T extends Record<string, unknown>>(options: {
+  getParentRoute: () => typeof rootRoute | ReturnType<typeof createRoute>,
+  path?: string,
+  id?: string,
+  component: () => Promise<{ default: React.ComponentType<T> }>,
+}) => {
+  return createRoute({
+    ...options,
+    component: lazyRouteComponent(options.component),
+  })
+}
+```
+
+### Feature-Based Route Organization
+
+Routes are organized by feature for better maintainability:
+
+```ts
+// src/router/routes/public.routes.ts
+export const publicRoute = createLazyRoute({
+  getParentRoute: () => rootRoute,
+  id: 'public',
+  component: () => import('../../components/layout/public-layout'),
+})
+
+export const indexRoute = createLazyRoute({
+  getParentRoute: () => publicRoute,
+  path: '/',
+  component: () => import('../../views/home-page'),
+})
+
+// Export route tree
+export const publicRoutes = publicRoute.addChildren([
+  indexRoute,
+  // ... other routes
+])
+```
+
+### Route Composition
+
+Routes are combined in the main routes file:
+
+```ts
+// src/router/routes.ts
+import { publicRoutes } from './routes/public.routes'
+import { authRoutes } from './routes/auth.routes'
+import { protectedRoutes } from './routes/protected.routes'
+
+export const routeTree = rootRoute.addChildren([
+  publicRoutes,
+  authRoutes,
+  ...protectedRoutes,
+])
+
+// Re-export for use in components
+export * from './routes/public.routes'
+export * from './routes/auth.routes'
+export * from './routes/protected.routes'
+```
+
+## Using Routes in Components
+
+Routes can be imported and used in a type-safe way:
+
+```tsx
+import { Link } from '@tanstack/react-router'
+import { indexRoute, signInRoute } from '@/router/routes'
+
+export function Navigation() {
+  return (
+    <nav>
+      <Link to={indexRoute.to}>Home</Link>
+      <Link to={signInRoute.to}>Sign In</Link>
+    </nav>
+  )
+}
+```
+
+## Protected Routes
+
+Protected routes are automatically guarded:
+
+```tsx
+// src/components/layout/protected-layout.tsx
+import { Navigate } from '@tanstack/react-router'
+import { useAuth } from '@/features/auth/contexts/auth-context'
+
+export default function ProtectedLayout() {
+  const { user } = useAuth()
+
+  if (!user) {
+    return <Navigate to="/auth/signin" />
+  }
+
+  return <Outlet />
+}
+```
+
+## Route Features
+
+Our routing system provides:
+
+- **Type Safety**: Full TypeScript support for routes and parameters
+- **Lazy Loading**: Automatic code splitting for better performance
+- **Feature Organization**: Routes grouped by domain
+- **Protected Routes**: Authentication-based access control
+- **Centralized Exports**: All routes available from a single import
+- **Maintainable Structure**: Each feature manages its own routes
+
+## Best Practices
+
+1. **Route Organization**:
+   - Keep routes close to their features
+   - Use the `createLazyRoute` utility for consistency
+   - Export both individual routes and route trees
+
+2. **Type Safety**:
+   - Use route objects instead of string literals
+   - Leverage TypeScript for route parameters
+   - Import routes from the central `routes.ts`
+
+3. **Code Splitting**:
+   - Use lazy loading for all route components
+   - Keep layouts and pages in separate files
+   - Use dynamic imports for route components
+
+4. **Navigation**:
+   - Use `Link` components with route objects
+   - Handle protected routes at the layout level
+   - Use `Navigate` for programmatic navigation

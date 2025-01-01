@@ -1,42 +1,20 @@
-import { useAuth } from '../features/auth/contexts/auth-context'
-import { LogOut, User } from 'lucide-react'
+'use client'
 
-export function Dashboard() {
-  const { user, signOut } = useAuth()
+type Props = {}
 
-  if (!user) {
-    return null
-  }
-
+export default function DashboardPage({}: Props) {
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-4">
-            <div className="bg-surface-light rounded-full p-2">
-              <User className="h-6 w-6 text-brand" />
-            </div>
-            <div>
-              <p className="text-white">{user.email}</p>
-            </div>
-          </div>
-          <button
-            onClick={() => signOut()}
-            className="inline-flex items-center px-4 py-2 border border-gray-600 rounded text-sm font-medium text-white bg-surface-light hover:bg-surface-dark transition-colors"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </button>
-        </div>
-      </div>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-surface-light shadow rounded-lg p-6">
-          <h2 className="text-2xl font-medium text-white mb-4">Welcome back!</h2>
-          <p className="text-gray-400">
-            This is your personal dashboard. You're successfully authenticated!
+    <div className="bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <h3 className="text-lg font-medium leading-6 text-gray-900">
+          Welcome to your Dashboard
+        </h3>
+        <div className="mt-2 max-w-xl text-sm text-gray-500">
+          <p>
+            This is your personal dashboard where you can manage your account and view your data.
           </p>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

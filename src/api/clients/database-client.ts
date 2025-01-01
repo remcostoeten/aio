@@ -1,17 +1,18 @@
-import { createSupabaseClient } from './supabase'
-import { env } from '../config/env'
-import { AuthMethods } from '../types/auth-types'
+import { createClient } from '@supabase/supabase-js';
 
-let dbClient: AuthMethods | null = null
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export function getDatabaseClient(): AuthMethods {
-  if (!dbClient) {
-    try {
-      dbClient = createSupabaseClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY)
-    } catch (error) {
-      console.error('Failed to initialize database client:', error)
-      throw new Error('Database client initialization failed. Please check your environment variables.')
-    }
-  }
-  return dbClient
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables. Please check your .env file');
 }
+
+export const getDatabaseClient = () => {
+  return createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
+};

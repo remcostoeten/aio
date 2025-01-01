@@ -1,61 +1,34 @@
-import { Router, Route, RootRoute, redirect, Outlet } from '@tanstack/react-router'
-import { AuthPage } from './views/auth-page'
-import { Dashboard } from './views/dashboard-page'
-import { ProtectedRoute } from './features/auth/components/protected-route'
-import { getDatabaseClient } from './api/clients/database-client'
-import { createAuthService } from './api/services/auth-service'
+/**
+ * @fileoverview Main router configuration that combines all route trees.
+ * This is the entry point for the application's routing system.
+ */
 
-const authService = createAuthService(getDatabaseClient())
+import { Router } from '@tanstack/react-router'
+import { rootRoute } from './routes/root-route'
+import { publicRouteTree } from './routes/public-routes'
+import { authRouteTree } from './routes/auth-routes'
+import { protectedRouteTree } from './routes/protected-routes'
 
-async function protectedLoader() {
-  const user = await authService.getCurrentUser()
-  if (!user) {
-    throw redirect({
-      to: '/signin'
-    })
-  }
-  return { user }
-}
-
-const rootRoute = new RootRoute({
-  component: () => <Outlet />
-})
-
-const indexRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  loader: protectedLoader,
-  component: Dashboard
-})
-
-const signInRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/signin',
-  component: () => <AuthPage mode="signin" />
-})
-
-const signUpRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/signup',
-  component: () => <AuthPage mode="signup" />
-})
-
-const dashboardRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/dashboard',
-  loader: protectedLoader,
-  component: Dashboard
-})
-
+/**
+ * Combined route tree containing all application routes.
+ * Merges public, auth, and protected routes under the root route.
+ */
 const routeTree = rootRoute.addChildren([
-  indexRoute,
-  signInRoute,
-  signUpRoute,
-  dashboardRoute,
+  ...publicRouteTree,
+  ...authRouteTree,
+  ...protectedRouteTree,
 ])
 
+/**
+ * The application router instance.
+ * @type {Router}
+ */
 export const router = new Router({ routeTree })
 
+/**
+ * Type declaration merging for TanStack Router.
+ * Ensures proper typing for the router throughout the application.
+ */
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
