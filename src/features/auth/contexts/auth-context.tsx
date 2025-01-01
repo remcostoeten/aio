@@ -7,8 +7,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithGithub: () => Promise<void>;
-  signInWithProvider: (provider: string) => Promise<void>;
+  signInWithProvider: (provider: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<{ error: Error | null }>;
   updateProfile: (updates: Partial<User>) => Promise<User | null>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -41,31 +40,28 @@ export const AuthProvider: React.FC<{
   }, [authService]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await authService.signInWithEmail(email, password);
-    return { error };
+    const response = await authService.signInWithEmail(email, password);
+    return { error: response.error };
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await authService.signUpWithEmail(email, password);
-    return { error };
-  };
-
-  const signInWithGithub = async () => {
-    await authService.signInWithGithub();
+    const response = await authService.signUpWithEmail(email, password);
+    return { error: response.error };
   };
 
   const signInWithProvider = async (provider: string) => {
-    await authService.signInWithProvider(provider);
+    const response = await authService.signInWithProvider(provider);
+    return { error: response.error };
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await authService.resetPassword(email);
-    return { error };
+    const response = await authService.resetPassword(email);
+    return { error: response.error };
   };
 
   const signOut = async () => {
-    const { error } = await authService.signOut();
-    return { error };
+    const response = await authService.signOut();
+    return { error: response.error };
   };
 
   const updateProfile = async (updates: Partial<User>) => {
@@ -80,7 +76,6 @@ export const AuthProvider: React.FC<{
     loading,
     signIn,
     signUp,
-    signInWithGithub,
     signInWithProvider,
     signOut,
     updateProfile,

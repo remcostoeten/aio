@@ -3,6 +3,8 @@
  * These routes require authentication to access and are protected by an auth loader.
  */
 
+'use client'
+
 import { createRoute, redirect } from '@tanstack/react-router'
 import { rootRoute } from './root-route'
 import { getDatabaseClient } from '../api/clients/database-client'
@@ -11,22 +13,24 @@ import DashboardPage from '../views/dashboard-page'
 
 const authService = createAuthService(getDatabaseClient())
 
-/**
- * Loader function to protect routes from unauthorized access.
- * Redirects to signin if user is not authenticated.
- * @async
- * @returns {Promise<{ user: any }>} The current user object if authenticated
- * @throws {Redirect} Redirects to signin page if not authenticated
- */
-async function protectedLoader() {
-  const user = await authService.getCurrentUser()
-  if (!user) {
-    throw redirect({
-      to: '/signin',
-      search: { redirect: window.location.pathname },
-    })
+const protectedLoader = async () => {
+  try {
+    const user = await authService.getCurrentUser()
+    if (!user) {
+      throw redirect({
+        to: '/signin',
+        search: {
+          redirect: window.location.pathname,
+        },
+      })
+    }
+    return { user }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Authentication failed')
   }
-  return { user }
 }
 
 /**
@@ -39,8 +43,13 @@ export const protectedRoutes = {
   dashboard: createRoute({
     getParentRoute: () => rootRoute,
     path: '/dashboard',
-    loader: protectedLoader,
-    component: DashboardPage,
+    beforeLoad: async () => {
+      const { user } = await protectedLoader()
+      return { user }
+    },
+    component: () => {
+      return <DashboardPage />
+    },
   }),
   // Add more protected routes here as needed
   // Example:

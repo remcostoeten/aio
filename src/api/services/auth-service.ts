@@ -48,10 +48,11 @@ export function createAuthService(client: SupabaseClient): AuthService {
     signInWithProvider: async (provider: string) => {
       try {
         const response = await client.auth.signInWithOAuth({
-          provider: provider as Provider
+          provider: provider as Provider,
+          options: { redirectTo: window.location.origin }
         });
         return { 
-          user: response.data.session?.user as User || null,
+          user: null,
           error: response.error 
         };
       } catch (error) {

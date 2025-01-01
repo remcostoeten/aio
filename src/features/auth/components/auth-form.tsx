@@ -156,19 +156,23 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded text-white bg-brand hover:bg-brand-dark focus:outline-none focus:ring-1 focus:ring-brand transition-all duration-200 ease-in-out active:bg-brand-darker"
               >
                 <Mail className="h-4 w-4 mr-2" />
-                {mode === 'signin' ? 'Sign in' : 'Sign up'} with Email
+                {mode === 'forgot-password' ? 'Reset Password' : mode === 'signin' ? 'Sign in' : 'Sign up'} with Email
               </button>
 
-              <div className="relative py-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-700" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-surface text-gray-500">Or continue with</span>
-                </div>
-              </div>
+              {mode !== 'forgot-password' && (
+                <>
+                  <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-700" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-surface text-gray-500">Or continue with</span>
+                    </div>
+                  </div>
 
-              <SocialLoginButtons mode={mode} />
+                  <SocialLoginButtons mode={mode} />
+                </>
+              )}
             </div>
           </form>
         )}
