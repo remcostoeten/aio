@@ -1,17 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { LoginPage } from '@/features/auth'
-import { AuthProvider } from '@/shared/context/auth-context'
+import { RouterProvider } from '@tanstack/react-router'
+import { AuthProvider } from './features/auth/contexts/auth-context'
+import { router } from './router'
+import { createAuthService } from './api/services/auth-service'
+import { getDatabaseClient } from './api/clients/database-client'
 
-export default function App() {
-  console.log('App rendering')
+function App() {
+  const authService = createAuthService(getDatabaseClient())
+
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
-  )
+    <AuthProvider authService={authService}>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
+
+export default App
